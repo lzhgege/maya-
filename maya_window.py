@@ -72,14 +72,14 @@ class ToolBox(QWidget):
         with open(toolDatajson_path, 'r') as file:
             data = json.load(file)
 
-        buttons = data["toolData"]
+            buttons = data["toolData"]
 
-        # 创建一个新的网格布局
-        maya_tools_layout = QGridLayout()
+            # 创建一个新的网格布局
+            maya_tools_layout = QGridLayout()
 
-        # 设置按钮之间的水平和垂直间距为 0
-        maya_tools_layout.setHorizontalSpacing(0)
-        maya_tools_layout.setVerticalSpacing(0)
+            # 设置按钮之间的水平和垂直间距为 0
+            maya_tools_layout.setHorizontalSpacing(0)
+            maya_tools_layout.setVerticalSpacing(0)
 
         # 添加按钮和名称
         for i, button_info in enumerate(buttons):
@@ -107,33 +107,21 @@ class ToolBox(QWidget):
             # 将QWidget添加到网格布局中
             maya_tools_layout.addWidget(button_widget, i // 4, i % 4)
 
-
-
-        # 将滑动条添加到布局中
-        scroll = QScrollArea()
-        scroll.setWidgetResizable(True)
-        scroll.setFixedHeight(300)
-        scroll_widget = QWidget()
-        scroll_widget.setLayout(maya_tools_layout)
-        scroll.setWidget(scroll_widget)
-
-        common_tools_layout.addWidget(scroll)
-
-        # 获取JSON文件的路径
-        scriptDatajson_path = ("C:/Maya_toolbox/plug-in/scriptData.json")
+            # 获取JSON文件的路径
+            scriptDatajson_path = ("C:/Maya_toolbox/plug-in/scriptData.json")
 
         # 加载JSON文件中的按钮信息
         with open(scriptDatajson_path, 'r') as file:
             data = json.load(file)
 
-        buttons = data["script"]
+            buttons = data["script"]
 
-        # 创建一个新的网格布局
-        plugin_layout = QGridLayout()
+            # 创建一个新的网格布局
+            plugin_layout = QGridLayout()
 
-        # 设置按钮之间的水平和垂直间距为 0
-        plugin_layout.setHorizontalSpacing(0)
-        plugin_layout.setVerticalSpacing(0)
+            # 设置按钮之间的水平和垂直间距为 0
+            plugin_layout.setHorizontalSpacing(0)
+            plugin_layout.setVerticalSpacing(0)
 
         # 添加按钮和名称
         for i, button_info in enumerate(buttons):
@@ -141,7 +129,6 @@ class ToolBox(QWidget):
             button.setFixedSize(60, 60)
             button.setIcon(QIcon(button_info["icon"]))
             button.clicked.connect(lambda command=button_info["command"]: run_script(command))
-
 
             # 创建一个垂直布局，以便排列按钮和名称
             button_layout = QVBoxLayout()
@@ -170,15 +157,39 @@ class ToolBox(QWidget):
             # 将QWidget添加到网格布局中
             plugin_layout.addWidget(button_widget, i // 4, i % 4)
 
-        # 将可滚动区域添加到 QVBoxLayout 中
-        scroll = QScrollArea()
-        scroll.setWidgetResizable(True)
-        scroll.setFixedHeight(300)
-        scroll_widget = QWidget()
-        scroll_widget.setLayout(plugin_layout)
-        scroll.setWidget(scroll_widget)
+        # 创建一个新的 QSplitter 对象，用于放置两个网格布局
+        splitter = QSplitter(Qt.Vertical)
 
-        common_tools_layout.addWidget(scroll)
+        # 创建两个新的 QScrollArea 对象
+        top_scroll = QScrollArea()
+        bottom_scroll = QScrollArea()
+
+        # 将滚动区域的 widgetResizable 属性设置为 True
+        top_scroll.setWidgetResizable(True)
+        bottom_scroll.setWidgetResizable(True)
+
+        # 创建两个新的 QWidget 对象
+        top_widget = QWidget()
+        bottom_widget = QWidget()
+
+        # 将 maya_tools_layout 设置为 top_widget 的布局
+        top_widget.setLayout(maya_tools_layout)
+
+        # 将 plugin_layout 设置为 bottom_widget 的布局
+        bottom_widget.setLayout(plugin_layout)
+
+        # 将 top_widget 和 bottom_widget 设置为滚动区域的子窗口
+        top_scroll.setWidget(top_widget)
+        bottom_scroll.setWidget(bottom_widget)
+
+        # 将 top_scroll 和 bottom_scroll 添加到 splitter 中
+        splitter.addWidget(top_scroll)
+        splitter.addWidget(bottom_scroll)
+
+        # 将 splitter 添加到 common_tools_page 的布局中
+        common_tools_layout.addWidget(splitter)
+
+
 
         # 预设材质球按钮
         preset_material_group = QGroupBox(u"预设材质球")
